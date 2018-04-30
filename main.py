@@ -22,10 +22,10 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
     FollowEvent, UnfollowEvent, JoinEvent, LeaveEvent
 )
-import line
+import line_modules
 
-line_bot_api = line.line_bot_api
-handler = line.handler
+line_bot_api = line_modules.line_bot_api
+handler = line_modules.handler
 
 
 app = Flask(__name__)
@@ -60,22 +60,22 @@ def respond_reply_message(event):
     # for debug
     print(event)
 
-    user_name = line.get_user_name(event=event)
+    user_name = line_modules.get_user_name(event=event)
 
     if event.source.type == "user":
-        line.send_reply_user_message(
+        line_modules.send_reply_user_message(
             event=event,
             user_name=user_name
         )
 
     elif event.source.type == "group":
-        line.send_reply_group_message(
+        line_modules.send_reply_group_message(
             event=event,
             user_name=user_name
         )
 
     elif event.source.type == "room":
-        line.send_reply_room_message(
+        line_modules.send_reply_room_message(
             event=event,
             user_name=user_name
         )
@@ -91,9 +91,9 @@ def respond_followed_message(event):
     # for debug
     print(event)
 
-    user_name = line.get_user_name(event=event)
+    user_name = line_modules.get_user_name(event=event)
 
-    line.send_follow_message(
+    line_modules.send_follow_message(
         event=event,
         user_name=user_name
     )
@@ -105,7 +105,7 @@ def send_unfollow_message(event):
     # for debug
     print(event)
 
-    line.send_unfollow_message()
+    line_modules.send_unfollow_message()
 
 
 @handler.add(JoinEvent)
@@ -114,7 +114,7 @@ def respond_join_event(event):
     # for debug
     print(event)
 
-    line.send_join_message(event=event)
+    line_modules.send_join_message(event=event)
 
 
 @handler.add(LeaveEvent)
@@ -123,7 +123,7 @@ def respond_leave_event(event):
     # for debug
     print(event)
 
-    line.send_leave_message_and_leave(event=event)
+    line_modules.send_leave_message_and_leave(event=event)
 
 
 if __name__ == "__main__":

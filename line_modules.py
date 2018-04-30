@@ -12,7 +12,7 @@ from linebot.models import (
 )
 import message_parser
 import message_texts
-import slack
+import slack_modlues
 
 # get channel_secret and channel_access_token from your environment variable
 channel_secret = os.getenv("LINE_CHANNEL_SECRET", None)
@@ -56,7 +56,7 @@ def send_debug_message(body):
     #     )
     # )
     print(body)
-    slack.debug_line_msg(
+    slack_modlues.debug_line_msg(
         msg=body
     )
 
@@ -254,7 +254,7 @@ def send_reply_user_message(event, user_name):
                     )
                 )
             )
-            slack.share_line_msg(
+            slack_modlues.share_line_msg(
                 msg=message_texts.create_slack_message(
                     user_name=user_name,
                     msg=msg
@@ -286,7 +286,7 @@ def send_reply_user_message(event, user_name):
                     )
                 )
             )
-            slack.share_line_msg(
+            slack_modlues.share_line_msg(
                 msg=message_texts.create_slack_message(
                     user_name=user_name,
                     msg=msg
