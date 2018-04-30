@@ -31,14 +31,17 @@ from linebot.models import (
 app = Flask(__name__)
 
 # get channel_secret and channel_access_token from your environment variable
-channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
-channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
+channel_secret = os.getenv("LINE_CHANNEL_SECRET", None)
+channel_access_token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", None)
+developer_line_id = os.getenv("DEVELOPER_LINE_ID", None)
 if channel_secret is None:
-    print('Specify LINE_CHANNEL_SECRET as environment variable.')
+    print("Specify LINE_CHANNEL_SECRET as environment variable.")
     sys.exit(1)
 if channel_access_token is None:
-    print('Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.')
+    print("Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.")
     sys.exit(1)
+if developer_line_id is None:
+    print("Specify DEVELOPER_LINE_ID as environment variable.")
 
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
@@ -65,12 +68,39 @@ def callback():
     return 'OK'
 
 
-@handler.add(MessageEvent, message=TextMessage)
-def message_text(event):
+def send_debug_message(body):
+
+    # メッセージを開発者に伝える
+    line_bot_api.push_message(
+        to=developer_line_id,
+        messages=TextSendMessage(
+            text=body
+        )
+    )
+
+
+def send_reply_user_message(event):
+
+    profile = line_bot_api.get_profile(event.source.user_id)
+
+    # メッセージを受け取ったことを本人に返信する
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event.message.text)
+        TextSendMessage(text="メッセージを受け取りました．")
     )
+
+    send_debug_message(
+        body="「" + profile.display_name + "」から「" + event.message.text + "」"
+    )
+
+
+@handler.add(MessageEvent, message=TextMessage)
+def send_reply_message(event):
+
+    # for debug
+    print(event)
+
+    send_reply_user_message(event)
 
 
 if __name__ == "__main__":
