@@ -79,9 +79,7 @@ def send_debug_message(body):
     )
 
 
-def send_reply_user_message(event):
-
-    profile = line_bot_api.get_profile(event.source.user_id)
+def send_reply_user_message(event, profile):
 
     # メッセージを受け取ったことを本人に返信する
     line_bot_api.reply_message(
@@ -90,7 +88,21 @@ def send_reply_user_message(event):
     )
 
     send_debug_message(
-        body="「" + profile.display_name + "」から「" + event.message.text + "」"
+        body="「" + profile.display_name + "」から個人トークで「" + event.message.text + "」"
+    )
+
+
+def send_reply_group_message(event, profile):
+
+    send_debug_message(
+        body="「" + profile.display_name + "」からグループトークで「" + event.message.text + "」"
+    )
+
+
+def send_reply_room_message(event, profile):
+
+    send_debug_message(
+        body="「" + profile.display_name + "」からルームトークで「" + event.message.text + "」"
     )
 
 
@@ -100,7 +112,21 @@ def send_reply_message(event):
     # for debug
     print(event)
 
-    send_reply_user_message(event)
+    # 送信者のプロフィール取得
+    profile = line_bot_api.get_profile(event.source.user_id)
+
+    if event.source.type == "user":
+        send_reply_user_message(event, profile)
+
+    elif event.source.type == "group":
+        send_reply_group_message(event, profile)
+
+    elif event.source.type == "room":
+        send_reply_room_message(event, profile)
+
+    else:
+        # ここに入ることはないハズ
+        print("unknown type")
 
 
 if __name__ == "__main__":
