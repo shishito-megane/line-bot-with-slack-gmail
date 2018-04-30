@@ -47,6 +47,21 @@ line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
 
+class Values(object):
+    """現在参加中のgroup_idを保持"""
+
+    def __init__(self, group_id):
+        self.now_group_id = group_id
+
+    def update(self, group_id):
+        print(str(self.now_group_id)+" ->update-> "+str(group_id))
+        self.now_group_id = group_id
+
+
+# 初期値設定
+values = Values(group_id="0")
+
+
 @app.route("/callback", methods=['POST'])
 def callback():
     # get X-Line-Signature header value
@@ -94,6 +109,9 @@ def send_reply_user_message(event, profile):
 
 def send_reply_group_message(event, profile):
 
+    # 参加中のgroup_idを念の為更新
+    values.update(group_id=event.source.group_id)
+
     send_debug_message(
         body="「" + profile.display_name + "」からグループトークで「" + event.message.text + "」"
     )
@@ -131,7 +149,7 @@ def respond_reply_message(event):
 
 def send_followd_message(event, profile):
 
-    follow_massage = """センパイ，友達追加ありがとうございます\uDBC0\uDC78\nどうぞよろしくお願いします．\uDBC0\uDCB3"""
+    follow_massage = """友達追加ありがとうございます\uDBC0\uDC78\nどうぞよろしくお願いします\uDBC0\uDCB3"""
 
     # 本人に返信
     line_bot_api.reply_message(
@@ -174,7 +192,7 @@ def send_unfollow_message(event):
 
 def send_join_message(event, group_id):
 
-    join_message = """はじめまして！\uDBC0\uDC8A\nボクは大学1年生の「ケンタ」って言います．\nセンパイからの伝言を伝えます．\n友達に追加してないセンパイは追加してね！！！！\uDBC0\uDCB3\n使い方を知りたいときは次のように言ってみてね．"""
+    join_message = """はじめまして\uDBC0\uDC8A\nボクは大学1年生の「ケンタ」って言います\nセンパイからの伝言を伝えます\n友達に追加してないセンパイは追加してね\uDBC0\uDCB3\n使い方を知りたいときは次のように言ってみてね．"""
 
     line_bot_api.reply_message(
         event.reply_token,
@@ -187,6 +205,9 @@ def send_join_message(event, group_id):
             text="**help"
         )
     )
+
+    # 参加中のgroup_idを更新
+    values.update(group_id=event.source.group_id)
 
     send_debug_message(
         body="新しいグループに参加しました．"
