@@ -28,22 +28,22 @@ from linebot.models import (
     FollowEvent, UnfollowEvent, JoinEvent, LeaveEvent
 )
 import message_parser
-import help_text
+import message_texts
 
 app = Flask(__name__)
 
 # get channel_secret and channel_access_token from your environment variable
 channel_secret = os.getenv("LINE_CHANNEL_SECRET", None)
 channel_access_token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", None)
-developer_line_id = os.getenv("DEVELOPER_LINE_ID", None)
+# developer_line_id = os.getenv("DEVELOPER_LINE_ID", None)
 if channel_secret is None:
     print("Specify LINE_CHANNEL_SECRET as environment variable.")
     sys.exit(1)
 if channel_access_token is None:
     print("Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.")
     sys.exit(1)
-if developer_line_id is None:
-    print("Specify DEVELOPER_LINE_ID as environment variable.")
+# if developer_line_id is None:
+#     print("Specify DEVELOPER_LINE_ID as environment variable.")
 
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
@@ -106,6 +106,7 @@ def send_group_message(body, group_id):
         )
     )
 
+
 def send_followd_message(event, profile):
 
     follow_massage = """友達追加ありがとうございます\uDBC0\uDC78\nどうぞよろしくお願いします\uDBC0\uDCB3"""
@@ -140,7 +141,7 @@ def send_join_message(event, group_id):
     line_bot_api.push_message(
         to=group_id,
         messages=TextSendMessage(
-            text="**help"
+            text="#使い方"
         )
     )
 
@@ -152,7 +153,7 @@ def send_join_message(event, group_id):
     )
 
 
-def send_leave_message(event, group_id):
+def send_leave_message(group_id):
 
     leave_message_previous = """ボクは去ります...\uD8C0\uDC7C\nいままで仲良くしてくれてありがとう！！\nこれからも個人トークで仲良くしてね！"""
 
@@ -189,14 +190,14 @@ def send_reply_group_message(event, user_name):
     # help
     if flg == "---h":
         send_group_message(
-            body=help_text,
+            body=message_texts.help_text,
             group_id=event.source.group_id
         )
         debug_msg += "\nhelpコマンドが入力されました．"
 
     # leave
     elif flg == "---l":
-        send_leave_message(event, group_id=event.source.group_id)
+        send_leave_message(group_id=event.source.group_id)
         debug_msg += msg
 
     else:
@@ -257,7 +258,7 @@ def send_reply_user_message(event, user_name):
 
     # help
     elif flg == "---h":
-        received_msg += help_text
+        received_msg += message_texts.help_text
         debug_msg += "\nhelpコマンドが入力されました．"
 
     # leave
@@ -266,7 +267,7 @@ def send_reply_user_message(event, user_name):
         debug_msg += msg
 
     else:
-        debug_msg += msg
+        print("unknown message")
 
     # メッセージを受け取ったことを本人に返信する
     line_bot_api.reply_message(
@@ -302,8 +303,6 @@ def respond_reply_message(event):
     else:
         # ここに入ることはないハズ
         print("unknown type")
-
-
 
 
 @handler.add(FollowEvent)
@@ -348,7 +347,7 @@ def respond_leave_event(event):
     # 退出したグループのIDをを取得
     group_id = event.source.group_id
 
-    send_leave_message(event, group_id)
+    send_leave_message(group_id)
 
 
 if __name__ == "__main__":
