@@ -209,59 +209,83 @@ def send_reply_user_message(event, user_name):
 
     # グループLINEに転送
     if flg == "l---":
-        line_bot_api.push_message(
-            to=values.now_group_id,
-            messages=TextSendMessage(
-                text=message_texts.create_line_message(
-                    user_name=user_name,
-                    msg=msg
+        try:
+            line_bot_api.push_message(
+                to=values.now_group_id,
+                messages=TextSendMessage(
+                    text=message_texts.create_line_message(
+                        user_name=user_name,
+                        msg=msg
+                    )
                 )
             )
-        )
-        received_msg += message_texts.info_message_shered
-        debug_msg += message_texts.create_debug_command_message(
-            command="l---"
-        )
+        except LineBotApiError as e:
+            # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
+            received_msg += message_texts.send_group_unknown_message
+            debug_msg += message_texts.debug_send_group_unknown_message
+            debug_msg += e
+        else:
+            received_msg += message_texts.info_message_shered
+        finally:
+            debug_msg += message_texts.create_debug_command_message(
+                command="l---"
+            )
 
     # グループLINEとslackに転送
     elif flg == "ls--":
         print("実装中")
-        line_bot_api.push_message(
-            to=values.now_group_id,
-            messages=TextSendMessage(
-                text=message_texts.create_line_message(
-                    user_name=user_name,
-                    msg=msg
+        try:
+            line_bot_api.push_message(
+                to=values.now_group_id,
+                messages=TextSendMessage(
+                    text=message_texts.create_line_message(
+                        user_name=user_name,
+                        msg=msg
+                    )
                 )
             )
-        )
-        # todo: ここにslack転送メッセージをつける
-        received_msg += message_texts.info_message_shered
-        debug_msg += message_texts.create_debug_command_message(
-            command="ls--"
-        )
+            # todo: ここにslack転送メッセージをつける
+        except LineBotApiError as e:
+            # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
+            received_msg += message_texts.send_group_unknown_message
+            debug_msg += message_texts.debug_send_group_unknown_message
+            debug_msg += e
+        else:
+            received_msg += message_texts.info_message_shered
+        finally:
+            debug_msg += message_texts.create_debug_command_message(
+                command="ls--"
+            )
 
     # グループLINEとslacｋとgmailに転送
     elif flg == "lsg-":
         print("実装中")
-        line_bot_api.push_message(
-            to=values.now_group_id,
-            messages=TextSendMessage(
-                text=message_texts.create_line_message(
-                    user_name=user_name,
-                    msg=msg
+        try:
+            line_bot_api.push_message(
+                to=values.now_group_id,
+                messages=TextSendMessage(
+                    text=message_texts.create_line_message(
+                        user_name=user_name,
+                        msg=msg
+                    )
                 )
             )
-        )
-        # todo: ここにslackとgmail転送メッセージをつける
-        received_msg += message_texts.info_message_shered
-        debug_msg += message_texts.create_debug_command_message(
-            command="lsg-"
-        )
+            # todo: ここにslack&gmail転送メッセージをつける
+        except LineBotApiError as e:
+            # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
+            received_msg += message_texts.send_group_unknown_message
+            debug_msg += message_texts.debug_send_group_unknown_message
+            debug_msg += e
+        else:
+            received_msg += message_texts.info_message_shered
+        finally:
+            debug_msg += message_texts.create_debug_command_message(
+                command="lsg-"
+            )
 
     # help
     elif flg == "---h":
-        received_msg += message_texts.help_text
+        received_msg = message_texts.help_text
         debug_msg += message_texts.create_debug_command_message(
             command="---h"
         )

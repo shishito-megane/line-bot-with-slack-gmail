@@ -41,6 +41,11 @@ info_message_shered = "ほかのみんなにも伝えたよ！"
 
 unknown_command_message = "その操作はここでは使えないよ!"
 
+send_group_unknown_message = """
+送信先のグループがわかりませんでした．
+送りたいグループで「#動け！」と言ってください．
+"""
+
 
 def create_line_message(user_name, msg):
     return "「"+user_name+"」センパイから「"+msg+"」と連絡がありました．"
@@ -52,6 +57,8 @@ debug_join_message = "新しいグループに参加しました．"
 
 debug_leave_message = "グループから退出しました．"
 
+debug_send_group_unknown_message = "送信先エラー"
+
 
 def create_debug_followed_message(user_name):
     return "新規フォロー:「" + user_name + "」"
@@ -62,4 +69,4 @@ def create_debug_line_message(user_name, msg, talk_type):
 
 
 def create_debug_command_message(command,):
-    return "command:"+command
+    return " command:"+command
