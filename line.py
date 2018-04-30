@@ -172,8 +172,14 @@ def send_reply_group_message(event, user_name):
         send_leave_message_and_leave(event)
         debug_msg += msg
 
+    # 開発者宛メッセージ
+    elif flg == "----":
+        debug_msg += message_texts.create_debug_command_message(
+            command="----"
+        )
+
     else:
-        debug_msg += msg
+        print("unknown message")
 
     # 開発者に送信
     send_debug_message(
