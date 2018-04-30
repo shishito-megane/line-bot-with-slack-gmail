@@ -27,6 +27,8 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
     FollowEvent, UnfollowEvent, JoinEvent, LeaveEvent
 )
+import message_parser
+import help_text
 
 app = Flask(__name__)
 
@@ -85,67 +87,24 @@ def callback():
 
 def send_debug_message(body):
 
-    # メッセージを開発者に伝える
+    # # メッセージを開発者に伝える
+    # line_bot_api.push_message(
+    #     to=developer_line_id,
+    #     messages=TextSendMessage(
+    #         text=body
+    #     )
+    # )
+    print(body)
+
+
+def send_group_message(body, group_id):
+
     line_bot_api.push_message(
-        to=developer_line_id,
+        to=group_id,
         messages=TextSendMessage(
             text=body
         )
     )
-
-
-def send_reply_user_message(event, profile):
-
-    # メッセージを受け取ったことを本人に返信する
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text="メッセージを受け取りました．")
-    )
-
-    send_debug_message(
-        body="「" + profile.display_name + "」から個人トークで「" + event.message.text + "」"
-    )
-
-
-def send_reply_group_message(event, profile):
-
-    # 参加中のgroup_idを念の為更新
-    values.update(group_id=event.source.group_id)
-
-    send_debug_message(
-        body="「" + profile.display_name + "」からグループトークで「" + event.message.text + "」"
-    )
-
-
-def send_reply_room_message(event, profile):
-
-    send_debug_message(
-        body="「" + profile.display_name + "」からルームトークで「" + event.message.text + "」"
-    )
-
-
-@handler.add(MessageEvent, message=TextMessage)
-def respond_reply_message(event):
-
-    # for debug
-    print(event)
-
-    # 送信者のプロフィール取得
-    profile = line_bot_api.get_profile(event.source.user_id)
-
-    if event.source.type == "user":
-        send_reply_user_message(event, profile)
-
-    elif event.source.type == "group":
-        send_reply_group_message(event, profile)
-
-    elif event.source.type == "room":
-        send_reply_room_message(event, profile)
-
-    else:
-        # ここに入ることはないハズ
-        print("unknown type")
-
 
 def send_followd_message(event, profile):
 
@@ -162,32 +121,11 @@ def send_followd_message(event, profile):
     )
 
 
-@handler.add(FollowEvent)
-def respond_followed_message(event):
-
-    # for debug
-    print(event)
-
-    # 送信者のプロフィール取得
-    profile = line_bot_api.get_profile(event.source.user_id)
-
-    send_followd_message(event, profile)
-
-
 def send_unfollowd_message():
 
     send_debug_message(
         body="誰かがブロックしました．．"
     )
-
-
-@handler.add(UnfollowEvent)
-def send_unfollow_message(event):
-
-    # for debug
-    print(event)
-
-    send_unfollowd_message()
 
 
 def send_join_message(event, group_id):
@@ -234,6 +172,159 @@ def send_leave_message(event, group_id):
     send_debug_message(
         body="グループから退出しました．"
     )
+
+
+def send_reply_group_message(event, user_name):
+
+    # 参加中のgroup_idを念の為更新
+    values.update(group_id=event.source.group_id)
+
+    debug_msg = "「" + user_name + "」がグループトークで「" + event.message.text + "」"
+
+    # 送られたメッセージを調べる
+    msg, flg = message_parser.parse_group_msg(
+        message=event.message.text
+    )
+
+    # help
+    if flg == "---h":
+        send_group_message(
+            body=help_text,
+            group_id=event.source.group_id
+        )
+        debug_msg += "\nhelpコマンドが入力されました．"
+
+    # leave
+    elif flg == "---l":
+        send_leave_message(event, group_id=event.source.group_id)
+        debug_msg += msg
+
+    else:
+        debug_msg += msg
+
+    # 開発者に送信
+    send_debug_message(
+        body=debug_msg
+    )
+
+
+def send_reply_room_message(event, user_name):
+
+    send_debug_message(
+        body="「" + user_name + "」からルームトークで「" + event.message.text + "」"
+    )
+
+
+def send_reply_user_message(event, user_name):
+
+    received_msg = "メッセージを受け取りました．"
+
+    debug_msg = "「" + user_name + "」から個人トークで「" + event.message.text + "」"
+
+    # 送られたメッセージを調べる
+    msg, flg = message_parser.parse_user_msg(
+        message=event.message.text
+    )
+
+    # グループLINEに転送
+    if flg == "l---":
+        send_group_message(
+            body="「"+user_name+"」から「"+msg+"」と連絡がありました．",
+            group_id=values.now_group_id
+        )
+        received_msg = "\nほかのみんなにもグループLINEで伝えたよ！"
+        debug_msg += "\nグループLINEに転送しました．"
+
+    # グループLINEとslackに転送
+    elif flg == "ls--":
+        print("実装中")
+        send_group_message(
+            body="「" + user_name + "」から「" + msg + "」と連絡がありました．",
+            group_id=values.now_group_id
+        )
+        received_msg += "\nほかのみんなにも伝えたよ！"
+        debug_msg += "\nグループLINEとslackに転送しました．"
+
+    # グループLINEとslacｋとgmailに転送
+    elif flg == "lsg-":
+        print("実装中")
+        send_group_message(
+            body="「" + user_name + "」から「" + msg + "」と連絡がありました．",
+            group_id=values.now_group_id
+        )
+        received_msg += "\nほかのみんなにも伝えたよ！"
+        debug_msg += "\nグループLINEとslackとG-mailに転送しました．"
+
+    # help
+    elif flg == "---h":
+        received_msg += help_text
+        debug_msg += "\nhelpコマンドが入力されました．"
+
+    # leave
+    elif flg == "---l":
+        received_msg += "\nここでは使えないよ!"
+        debug_msg += msg
+
+    else:
+        debug_msg += msg
+
+    # メッセージを受け取ったことを本人に返信する
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=received_msg)
+    )
+
+    # 開発者にも伝える
+    send_debug_message(
+        body=debug_msg
+    )
+
+
+@handler.add(MessageEvent, message=TextMessage)
+def respond_reply_message(event):
+
+    # for debug
+    print(event)
+
+    # 送信者のプロフィール取得
+    profile = line_bot_api.get_profile(event.source.user_id)
+    user_name = profile.display_name
+
+    if event.source.type == "user":
+        send_reply_user_message(event, user_name)
+
+    elif event.source.type == "group":
+        send_reply_group_message(event, user_name)
+
+    elif event.source.type == "room":
+        send_reply_room_message(event, user_name)
+
+    else:
+        # ここに入ることはないハズ
+        print("unknown type")
+
+
+
+
+@handler.add(FollowEvent)
+def respond_followed_message(event):
+
+    # for debug
+    print(event)
+
+    # 送信者のプロフィール取得
+    profile = line_bot_api.get_profile(event.source.user_id)
+
+    send_followd_message(event, profile)
+
+
+@handler.add(UnfollowEvent)
+def send_unfollow_message(event):
+
+    # for debug
+    print(event)
+
+    send_unfollowd_message()
 
 
 @handler.add(JoinEvent)
