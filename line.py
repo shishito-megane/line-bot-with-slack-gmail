@@ -275,7 +275,7 @@ def send_reply_user_message(event, user_name):
             # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
             received_msg += message_texts.send_group_unknown_message
             debug_msg += message_texts.debug_send_group_unknown_message
-            debug_msg += e
+            debug_msg += str(e)
         else:
             received_msg += message_texts.info_message_shered
         finally:
