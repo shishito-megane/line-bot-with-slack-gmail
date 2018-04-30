@@ -12,6 +12,7 @@ from linebot.models import (
 )
 import message_parser
 import message_texts
+import slack
 
 # get channel_secret and channel_access_token from your environment variable
 channel_secret = os.getenv("LINE_CHANNEL_SECRET", None)
@@ -251,6 +252,10 @@ def send_reply_user_message(event, user_name):
                 )
             )
             # todo: ここにslack転送メッセージをつける
+            slack.share_line_msg(
+                msg=msg
+            )
+
         except LineBotApiError as e:
             # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
             received_msg += message_texts.send_group_unknown_message
@@ -277,6 +282,9 @@ def send_reply_user_message(event, user_name):
                 )
             )
             # todo: ここにslack&gmail転送メッセージをつける
+            slack.share_line_msg(
+                msg=msg
+            )
         except LineBotApiError as e:
             # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
             received_msg += message_texts.send_group_unknown_message
