@@ -156,10 +156,10 @@ def respond_followed_message(event):
     send_followd_message(event, profile)
 
 
-def send_unfollowd_message(profile):
+def send_unfollowd_message():
 
     send_debug_message(
-        body="「" + profile.display_name + "」とサヨナラしました．"
+        body="誰かがブロックしました．．"
     )
 
 
@@ -169,10 +169,7 @@ def send_unfollow_message(event):
     # for debug
     print(event)
 
-    # 送信者のプロフィール取得
-    profile = line_bot_api.get_profile(event.source.user_id)
-
-    send_unfollowd_message(profile)
+    send_unfollowd_message()
 
 
 def send_join_message(event, group_id):
