@@ -107,7 +107,7 @@ def send_reply_room_message(event, profile):
 
 
 @handler.add(MessageEvent, message=TextMessage)
-def send_reply_message(event):
+def respond_reply_message(event):
 
     # for debug
     print(event)
@@ -127,6 +127,119 @@ def send_reply_message(event):
     else:
         # ここに入ることはないハズ
         print("unknown type")
+
+
+def send_followd_message(event, profile):
+
+    follow_massage = """センパイ，友達追加ありがとうございます\uDBC0\uDC78\nどうぞよろしくお願いします．\uDBC0\uDCB3"""
+
+    # 本人に返信
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=follow_massage)
+    )
+
+    send_debug_message(
+        body="「" + profile.display_name + "」と友達になりました．"
+    )
+
+
+@handler.add(FollowEvent)
+def respond_followed_message(event):
+
+    # for debug
+    print(event)
+
+    # 送信者のプロフィール取得
+    profile = line_bot_api.get_profile(event.source.user_id)
+
+    send_followd_message(event, profile)
+
+
+def send_unfollowd_message(profile):
+
+    send_debug_message(
+        body="「" + profile.display_name + "」とサヨナラしました．"
+    )
+
+
+@handler.add(UnfollowEvent)
+def send_unfollow_message(event):
+
+    # for debug
+    print(event)
+
+    # 送信者のプロフィール取得
+    profile = line_bot_api.get_profile(event.source.user_id)
+
+    send_unfollowd_message(profile)
+
+
+def send_join_message(event, group_id):
+
+    join_message = """はじめまして！\uDBC0\uDC8A\nボクは大学1年生の「ケンタ」って言います．\nセンパイからの伝言を伝えます．\n友達に追加してないセンパイは追加してね！！！！\uDBC0\uDCB3\n使い方を知りたいときは次のように言ってみてね．"""
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=join_message)
+    )
+
+    line_bot_api.push_message(
+        to=group_id,
+        messages=TextSendMessage(
+            text="**help"
+        )
+    )
+
+    send_debug_message(
+        body="新しいグループに参加しました．"
+    )
+
+
+def send_leave_message(event, group_id):
+
+    leave_message_previous = """ボクは去ります...\uD8C0\uDC7C\nいままで仲良くしてくれてありがとう！！\nこれからも個人トークで仲良くしてね！"""
+
+    try:
+        line_bot_api.push_message(
+            to=group_id,
+            messages=TextSendMessage(
+                text=leave_message_previous
+            )
+        )
+    except LineBotApiError as e:
+        print("サヨナラメッセージが送れませんでした")
+        print(e)
+    else:
+        line_bot_api.leave_group(group_id=group_id)
+
+    send_debug_message(
+        body="グループから退出しました．"
+    )
+
+
+@handler.add(JoinEvent)
+def respond_join_event(event):
+
+    # for debug
+    print(event)
+
+    # 参加したグループのIDを取得
+    group_id = event.source.group_id
+
+    send_join_message(event, group_id)
+
+
+@handler.add(LeaveEvent)
+def respond_leave_event(event):
+
+    # for debug
+    print(event)
+
+    # 退出したグループのIDをを取得
+    group_id = event.source.group_id
+
+    send_leave_message(event, group_id)
 
 
 if __name__ == "__main__":
