@@ -56,6 +56,9 @@ def send_debug_message(body):
     #     )
     # )
     print(body)
+    slack.debug_line_msg(
+        msg=body
+    )
 
 
 def get_user_name(event):
@@ -251,9 +254,11 @@ def send_reply_user_message(event, user_name):
                     )
                 )
             )
-            # todo: ここにslack転送メッセージをつける
             slack.share_line_msg(
-                msg=msg
+                msg=message_texts.create_slack_message(
+                    user_name=user_name,
+                    msg=msg
+                )
             )
 
         except LineBotApiError as e:
@@ -281,10 +286,13 @@ def send_reply_user_message(event, user_name):
                     )
                 )
             )
-            # todo: ここにslack&gmail転送メッセージをつける
             slack.share_line_msg(
-                msg=msg
+                msg=message_texts.create_slack_message(
+                    user_name=user_name,
+                    msg=msg
+                )
             )
+            # todo: ここにgmail転送メッセージをつける
         except LineBotApiError as e:
             # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
             received_msg += message_texts.send_group_unknown_message
