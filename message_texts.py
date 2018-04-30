@@ -51,6 +51,10 @@ def create_line_message(user_name, msg):
     return "「"+user_name+"」センパイから「"+msg+"」と連絡がありました．"
 
 
+def create_slack_message(user_name, msg):
+    return "「"+user_name+"」センパイから「"+msg+"」と連絡がありました．"
+
+
 debug_unfollow_message = "誰かがブロックしました．．."
 
 debug_join_message = "新しいグループに参加しました．"

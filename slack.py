@@ -23,6 +23,15 @@ def share_line_msg(msg):
     )
 
 
+def debug_line_msg(msg):
+
+    slack.chat.post_message(
+        "U3D7R5WQ",
+        text=msg,
+        as_user=True
+    )
+
+
 if __name__ == '__main__':
 
     slack.chat.post_message(
