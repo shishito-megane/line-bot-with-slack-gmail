@@ -1,5 +1,6 @@
 import os
 import sys
+import threading
 # import configparser
 from linebot import (
     LineBotApi, WebhookHandler
@@ -15,7 +16,6 @@ from debuger import send_debug_message
 import message_parser
 import message_texts
 import slack_modlues
-import features
 
 # get channel_secret and channel_access_token from your environment variable
 channel_secret = os.getenv("LINE_CHANNEL_SECRET", None)
@@ -78,13 +78,27 @@ def get_user_name(event):
     return user_name
 
 
+def count_180s(event):
+
+    t = threading.Timer(
+        interval=180,
+        function=line_bot_api.push_message(
+            to=event.source.user_id,
+            messages=TextSendMessage(
+                text=message_texts.timer_complete_message
+            )
+        )
+    )
+    t.start()
+
+
 def send_follow_message(event, user_name):
 
     follow_massage = message_texts.followd_message
 
     line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=follow_massage)
+        reply_token=event.reply_token,
+        messages=TextSendMessage(text=follow_massage)
     )
 
     send_debug_message(
@@ -109,8 +123,8 @@ def send_join_message(event):
     join_message = message_texts.join_message
 
     line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=join_message)
+        reply_token=event.reply_token,
+        messages=TextSendMessage(text=join_message)
     )
 
     line_bot_api.push_message(
@@ -172,8 +186,8 @@ def send_reply_group_message(event, user_name):
 
     # help
     if flg == "---h":
-        line_bot_api.push_message(
-            to=event.source.group_id,
+        line_bot_api.reply_message(
+            reply_token=event.reply_token,
             messages=TextSendMessage(
                 text=message_texts.help_text
             )
@@ -191,22 +205,14 @@ def send_reply_group_message(event, user_name):
     elif flg == "---t":
 
         # タイマーをセットしたことを伝える
-        line_bot_api.push_message(
-            to=event.source.group_id,
+        line_bot_api.reply_message(
+            reply_token=event.reply_token,
             messages=TextSendMessage(
                 text=message_texts.timer_set_message
             )
         )
         # 3分後にお知らせ
-        features.timer(
-            sec=180,
-            module=line_bot_api.push_message(
-                to=event.source.group_id,
-                messages=TextSendMessage(
-                    text=message_texts.timer_complete_message
-                )
-            )
-        )
+        count_180s(event)
 
     # 開発者宛メッセージ
     elif flg == "----":
@@ -357,17 +363,9 @@ def send_reply_user_message(event, user_name):
     elif flg == "---t":
 
         # タイマーをセットしたことを伝える
-        received_msg += message_texts.timer_set_message
+        received_msg = message_texts.timer_set_message
         # 3分後にお知らせ
-        features.timer(
-            sec=180,
-            module=line_bot_api.push_message(
-                to=event.source.user_id,
-                messages=TextSendMessage(
-                    text=message_texts.timer_complete_message
-                )
-            )
-        )
+        count_180s(event)
 
     # 開発者宛メッセージ
     elif flg == "----":
