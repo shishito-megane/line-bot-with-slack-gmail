@@ -62,9 +62,19 @@ values = Values(group_id="0")
 
 def get_user_name(event):
 
-    profile = line_bot_api.get_profile(event.source.user_id)
+    try:
+        profile = line_bot_api.get_profile(event.source.user_id)
+        user_name = profile.display_name
+    except LineBotApiError as e:
+        user_name = message_texts.unknown_display_name
+        slack_modlues.debug_line_msg(
+            msg=e
+        )
 
-    return profile.display_name
+    # for debug
+    user_name = "***デバッグ中につき非表示***"
+
+    return user_name
 
 
 def send_follow_message(event, user_name):

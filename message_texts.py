@@ -46,6 +46,8 @@ send_group_unknown_message = """
 送りたいグループで「#動け！」と言ってください．
 """
 
+unknown_display_name = "ボクがわからないユーザー(友達になってよ...)"
+
 
 def create_line_message(user_name, msg):
     return "「"+user_name+"」センパイから「"+msg+"」と連絡がありました．"
