@@ -13,19 +13,25 @@ from linebot.models import (
 import message_parser
 import message_texts
 import slack_modlues
+import configparser
 
-# get channel_secret and channel_access_token from your environment variable
-channel_secret = os.getenv("LINE_CHANNEL_SECRET", None)
-channel_access_token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", None)
-# developer_line_id = os.getenv("DEVELOPER_LINE_ID", None)
+# # get channel_secret and channel_access_token from your environment variable
+# channel_secret = os.getenv("LINE_CHANNEL_SECRET", None)
+# channel_access_token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", None)
+
+# get channel_secret and channel_access_token from ini file
+ini_file = configparser.ConfigParser()
+ini_file.read_file(open(file="config.ini"))
+channel_secret = ini_file.get("line", "LINE_CHANNEL_SECRET")
+channel_access_token = ini_file.get("line", "LINE_CHANNEL_ACCESS_TOKEN")
+
+# check
 if channel_secret is None:
     print("Specify LINE_CHANNEL_SECRET as environment variable.")
     sys.exit(1)
 if channel_access_token is None:
     print("Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.")
     sys.exit(1)
-# if developer_line_id is None:
-#     print("Specify DEVELOPER_LINE_ID as environment variable.")
 
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
