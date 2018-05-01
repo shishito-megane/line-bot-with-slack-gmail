@@ -1,24 +1,24 @@
 import os
 import smtplib
-import configparser
+# import configparser
 from email.mime.text import MIMEText
 from email.utils import formatdate
 import message_texts
 from debuger import send_debug_message
 
-# # get channel_secret and channel_access_token from your environment variable
-# from_address = os.getenv("FROM_ADDRESS", None)
-# from_passwd = os.getenv("FROM_PASSWORD", None)
-# to_address = os.getenv("TO_ADDRESS", None)
-# bcc_address = os.getenv("BCC_ADDRESS", None)
+# get channel_secret and channel_access_token from your environment variable
+from_address = os.getenv("FROM_ADDRESS", None)
+from_passwd = os.getenv("FROM_PASSWORD", None)
+to_address = os.getenv("TO_ADDRESS", None)
+bcc_address = os.getenv("BCC_ADDRESS", None)
 
 # get channel_secret and channel_access_token from ini file
-ini_file = configparser.ConfigParser()
-ini_file.read_file(open(file="config.ini"))
-from_address = ini_file.get("email", "FROM_ADDRESS")
-from_passwd = ini_file.get("email", "FROM_PASSWORD")
-to_address = ini_file.get("email", "TO_ADDRESS")
-bcc_address = ini_file.get("email", "BCC_ADDRESS")
+# ini_file = configparser.ConfigParser()
+# ini_file.read_file(open(file="config.ini"))
+# from_address = ini_file.get("email", "FROM_ADDRESS")
+# from_passwd = ini_file.get("email", "FROM_PASSWORD")
+# to_address = ini_file.get("email", "TO_ADDRESS")
+# bcc_address = ini_file.get("email", "BCC_ADDRESS")
 
 # check
 if from_address is None:
