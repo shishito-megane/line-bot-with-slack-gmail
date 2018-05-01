@@ -11,7 +11,7 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
     FollowEvent, UnfollowEvent, JoinEvent, LeaveEvent
 )
-from main import send_debug_message
+from debuger import send_debug_message
 import message_parser
 import message_texts
 import slack_modlues
