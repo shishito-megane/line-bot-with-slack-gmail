@@ -16,6 +16,7 @@ from debuger import send_debug_message
 import message_parser
 import message_texts
 import slack_modlues
+import email_modules
 
 # get channel_secret and channel_access_token from your environment variable
 channel_secret = os.getenv("LINE_CHANNEL_SECRET", None)
@@ -262,6 +263,11 @@ def send_reply_user_message(event, user_name):
 
     # グループLINEに転送
     if flg == "l---":
+
+        debug_msg += message_texts.create_debug_command_message(
+            command="l---"
+        )
+
         try:
             line_bot_api.push_message(
                 to=values.now_group_id,
@@ -279,14 +285,14 @@ def send_reply_user_message(event, user_name):
             debug_msg += e
         else:
             received_msg += message_texts.info_message_shered
-        finally:
-            debug_msg += message_texts.create_debug_command_message(
-                command="l---"
-            )
 
     # グループLINEとslackに転送
     elif flg == "ls--":
-        print("実装中")
+
+        debug_msg += message_texts.create_debug_command_message(
+            command="ls--"
+        )
+
         try:
             line_bot_api.push_message(
                 to=values.now_group_id,
@@ -297,13 +303,6 @@ def send_reply_user_message(event, user_name):
                     )
                 )
             )
-            slack_modlues.share_line_msg(
-                msg=message_texts.create_slack_message(
-                    user_name=user_name,
-                    msg=msg
-                )
-            )
-
         except LineBotApiError as e:
             # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
             received_msg += message_texts.send_group_unknown_message
@@ -311,14 +310,21 @@ def send_reply_user_message(event, user_name):
             debug_msg += e
         else:
             received_msg += message_texts.info_message_shered
-        finally:
-            debug_msg += message_texts.create_debug_command_message(
-                command="ls--"
+
+        slack_modlues.share_line_msg(
+            msg=message_texts.create_slack_message(
+                user_name=user_name,
+                msg=msg
             )
+        )
 
     # グループLINEとslacｋとgmailに転送
     elif flg == "lsg-":
-        print("実装中")
+
+        debug_msg += message_texts.create_debug_command_message(
+            command="lsg-"
+        )
+
         try:
             line_bot_api.push_message(
                 to=values.now_group_id,
@@ -329,13 +335,6 @@ def send_reply_user_message(event, user_name):
                     )
                 )
             )
-            slack_modlues.share_line_msg(
-                msg=message_texts.create_slack_message(
-                    user_name=user_name,
-                    msg=msg
-                )
-            )
-            # todo: ここにgmail転送メッセージをつける
         except LineBotApiError as e:
             # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
             received_msg += message_texts.send_group_unknown_message
@@ -343,10 +342,17 @@ def send_reply_user_message(event, user_name):
             debug_msg += str(e)
         else:
             received_msg += message_texts.info_message_shered
-        finally:
-            debug_msg += message_texts.create_debug_command_message(
-                command="lsg-"
+
+        slack_modlues.share_line_msg(
+            msg=message_texts.create_slack_message(
+                user_name=user_name,
+                msg=msg
             )
+        )
+        received_msg += email_modules.send(
+            user_name=user_name,
+            msg=msg
+        )
 
     # help
     elif flg == "---h":
@@ -381,10 +387,10 @@ def send_reply_user_message(event, user_name):
             body=message_texts.debug_parse_message_err
         )
 
-    # メッセージを受け取ったことを本人に返信する
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=received_msg)
+    # メッセージを受け取った結果を本人に返信する
+    line_bot_api.push_message(
+        to=event.source.user_id,
+        messages=TextSendMessage(text=received_msg)
     )
 
     # 開発者にも伝える

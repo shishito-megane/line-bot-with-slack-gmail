@@ -58,6 +58,11 @@ send_group_unknown_message = """
 
 unknown_display_name = "ボクがわからないユーザー(友達になってよ...)"
 
+email_subject = "出欠連絡ボットからの新しいメッセージです"
+
+email_err = "メールが送れませんでした．ボクを作ってくれた人に連絡してください．"
+
+email_send_message = "メールを送ったよ！"
 
 def create_line_message(user_name, msg):
     return "「"+user_name+"」センパイから「"+msg+"」と連絡がありました．"
@@ -65,6 +70,10 @@ def create_line_message(user_name, msg):
 
 def create_slack_message(user_name, msg):
     return "「"+user_name+"」センパイから「"+msg+"」と連絡がありました．"
+
+
+def create_email_message(user_name, msg):
+    return "出欠連絡ボットです．\n「"+user_name+"」さんから「"+msg+"」と連絡がありました．"
 
 
 debug_unfollow_message = "誰かがブロックしました．．."
@@ -79,6 +88,10 @@ debug_send_leave_message_err = "サヨナラメッセージが送れませんで
 
 debug_parse_message_err = "パースに失敗したようです"
 
+debug_email_err = "メールが送れませんでした．"
+
+debug_email_send_message = "メールを送りました．"
+
 
 def create_debug_followed_message(user_name):
     return "新規フォロー:「" + user_name + "」"
@@ -90,3 +103,4 @@ def create_debug_line_message(user_name, msg, talk_type):
 
 def create_debug_command_message(command,):
     return " command:"+command
+
