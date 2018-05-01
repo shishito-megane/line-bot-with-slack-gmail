@@ -186,8 +186,8 @@ def send_reply_group_message(event, user_name):
 
     # help
     if flg == "---h":
-        line_bot_api.reply_message(
-            reply_token=event.reply_token,
+        line_bot_api.push_message(
+            to=event.source.group_id,
             messages=TextSendMessage(
                 text=message_texts.help_text
             )
@@ -205,8 +205,8 @@ def send_reply_group_message(event, user_name):
     elif flg == "---t":
 
         # タイマーをセットしたことを伝える
-        line_bot_api.reply_message(
-            reply_token=event.reply_token,
+        line_bot_api.push_message(
+            to=event.source.group_id,
             messages=TextSendMessage(
                 text=message_texts.timer_set_message
             )
