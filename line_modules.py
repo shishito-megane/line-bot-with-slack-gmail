@@ -11,7 +11,7 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
     FollowEvent, UnfollowEvent, JoinEvent, LeaveEvent
 )
-import main
+from main import send_debug_message
 import message_parser
 import message_texts
 import slack_modlues
@@ -76,7 +76,7 @@ def send_follow_message(event, user_name):
         TextSendMessage(text=follow_massage)
     )
 
-    main.send_debug_message(
+    send_debug_message(
         body=message_texts.create_debug_followed_message(
             user_name=user_name
         )
@@ -85,7 +85,7 @@ def send_follow_message(event, user_name):
 
 def send_unfollow_message():
 
-    main.send_debug_message(
+    send_debug_message(
         body=message_texts.debug_unfollow_message
     )
 
@@ -112,7 +112,7 @@ def send_join_message(event):
     # 参加中のgroup_idを更新
     values.update(group_id=group_id)
 
-    main.send_debug_message(
+    send_debug_message(
         body=message_texts.debug_join_message
     )
 
@@ -132,13 +132,13 @@ def send_leave_message_and_leave(event):
             )
         )
     except LineBotApiError as e:
-        main.send_debug_message(
+        send_debug_message(
             body=message_texts.debug_send_leave_message_err + e
         )
     else:
         line_bot_api.leave_group(group_id=group_id)
     finally:
-        main.send_debug_message(
+        send_debug_message(
             body=message_texts.debug_leave_message
         )
 
@@ -183,19 +183,19 @@ def send_reply_group_message(event, user_name):
         )
 
     else:
-        main.send_debug_message(
+        send_debug_message(
             body=message_texts.debug_parse_message_err
         )
 
     # 開発者に送信
-    main.send_debug_message(
+    send_debug_message(
         body=debug_msg
     )
 
 
 def send_reply_room_message(event, user_name):
 
-    main.send_debug_message(
+    send_debug_message(
         body=message_texts.create_debug_line_message(
             user_name=user_name,
             msg=event.message.text,
@@ -328,7 +328,7 @@ def send_reply_user_message(event, user_name):
         )
 
     else:
-        main.send_debug_message(
+        send_debug_message(
             body=message_texts.debug_parse_message_err
         )
 
@@ -339,6 +339,6 @@ def send_reply_user_message(event, user_name):
     )
 
     # 開発者にも伝える
-    main.send_debug_message(
+    send_debug_message(
         body=debug_msg
     )
