@@ -7,6 +7,7 @@ def parse_user_msg(message):
     # help & leave
     help_flg = re.fullmatch(r"#使い方", message)
     leave_flg = re.fullmatch(r"#退出", message)
+    timer_flg = re.fullmatch(r"#タイマー", message)
 
     # to line message
     l_msg = re.search(r"#--(.*)--#", message)
@@ -21,6 +22,8 @@ def parse_user_msg(message):
         return None, "---h"
     elif leave_flg:
         return None, "---l"
+    elif timer_flg:
+        return None, "---t"
     elif l_msg:
         return l_msg.group(1), "l---"
     elif ls_msg:
@@ -36,11 +39,14 @@ def parse_group_msg(message):
     # help & leave
     help_flg = re.fullmatch(r"#使い方", message)
     leave_flg = re.fullmatch(r"#退出", message)
+    timer_flg = re.fullmatch(r"#タイマー", message)
 
     if help_flg:
         return None, "---h"
     elif leave_flg:
         return None, "---l"
+    elif timer_flg:
+        return None, "---t"
     else:
         return message, "----"
 

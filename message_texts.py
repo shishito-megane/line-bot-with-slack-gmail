@@ -35,6 +35,10 @@ leave_message = """
 これからも個人トークで仲良くしてね！
 """
 
+timer_set_message = "タイマーをセットしました．3分後にお知らせするよ！"
+
+timer_complete_message = """3分経ちました．カップ麺食べたいなー！"""
+
 info_received_message = "メッセージを受け取りました．"
 
 info_message_shered = "ほかのみんなにも伝えたよ！"

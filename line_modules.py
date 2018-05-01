@@ -15,6 +15,7 @@ from debuger import send_debug_message
 import message_parser
 import message_texts
 import slack_modlues
+import features
 
 # get channel_secret and channel_access_token from your environment variable
 channel_secret = os.getenv("LINE_CHANNEL_SECRET", None)
@@ -186,6 +187,27 @@ def send_reply_group_message(event, user_name):
         send_leave_message_and_leave(event)
         debug_msg += msg
 
+    # timer
+    elif flg == "---t":
+
+        # タイマーをセットしたことを伝える
+        line_bot_api.push_message(
+            to=event.source.group_id,
+            messages=TextSendMessage(
+                text=message_texts.timer_set_message
+            )
+        )
+        # 3分後にお知らせ
+        features.timer(
+            sec=180,
+            module=line_bot_api.push_message(
+                to=event.source.group_id,
+                messages=TextSendMessage(
+                    text=message_texts.timer_complete_message
+                )
+            )
+        )
+
     # 開発者宛メッセージ
     elif flg == "----":
         debug_msg += message_texts.create_debug_command_message(
@@ -329,6 +351,22 @@ def send_reply_user_message(event, user_name):
         received_msg += message_texts.unknown_command_message
         debug_msg += message_texts.create_debug_command_message(
             command="---l"
+        )
+
+    # timer
+    elif flg == "---t":
+
+        # タイマーをセットしたことを伝える
+        received_msg += message_texts.timer_set_message
+        # 3分後にお知らせ
+        features.timer(
+            sec=180,
+            module=line_bot_api.push_message(
+                to=event.source.user_id,
+                messages=TextSendMessage(
+                    text=message_texts.timer_complete_message
+                )
+            )
         )
 
     # 開発者宛メッセージ
