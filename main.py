@@ -23,7 +23,6 @@ from linebot.models import (
     FollowEvent, UnfollowEvent, JoinEvent, LeaveEvent
 )
 import line_modules
-import slack_modlues
 
 line_bot_api = line_modules.line_bot_api
 handler = line_modules.handler
