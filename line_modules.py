@@ -192,7 +192,7 @@ def send_reply_group_message(event, user_name):
         line_bot_api.push_message(
             to=event.source.group_id,
             messages=TextSendMessage(
-                text=message_texts.help_text
+                text=message_texts.help_text_group
             )
         )
         debug_msg += message_texts.create_debug_command_message(
@@ -350,7 +350,7 @@ def send_reply_user_message(event, user_name):
 
     # help
     elif flg == "---h":
-        received_msg = message_texts.help_text
+        received_msg = message_texts.help_text_user
         debug_msg += message_texts.create_debug_command_message(
             command="---h"
         )
