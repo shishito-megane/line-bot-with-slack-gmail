@@ -63,6 +63,10 @@ debug_leave_message = "グループから退出しました．"
 
 debug_send_group_unknown_message = "送信先エラー"
 
+debug_send_leave_message_err = "サヨナラメッセージが送れませんでした"
+
+debug_parse_message_err = "パースに失敗したようです"
+
 
 def create_debug_followed_message(user_name):
     return "新規フォロー:「" + user_name + "」"

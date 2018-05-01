@@ -23,12 +23,31 @@ from linebot.models import (
     FollowEvent, UnfollowEvent, JoinEvent, LeaveEvent
 )
 import line_modules
+import slack_modlues
 
 line_bot_api = line_modules.line_bot_api
 handler = line_modules.handler
 
 
 app = Flask(__name__)
+
+
+def send_debug_message(body):
+
+    print(body)
+
+    # # LINEで送る
+    # line_bot_api.push_message(
+    #     to=developer_line_id,
+    #     messages=TextSendMessage(
+    #         text=body
+    #     )
+    # )
+
+    # slackで送る
+    slack_modlues.debug_line_msg(
+        msg=body
+    )
 
 
 # LINEからのイベントハンドラー
