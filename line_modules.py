@@ -80,14 +80,17 @@ def get_user_name(event):
 
 def count_180s(event):
 
-    t = threading.Timer(
-        interval=180,
-        function=line_bot_api.push_message(
+    def info_180s():
+        line_bot_api.push_message(
             to=event.source.user_id,
             messages=TextSendMessage(
                 text=message_texts.timer_complete_message
             )
         )
+
+    t = threading.Timer(
+        interval=180,
+        function=info_180s
     )
     t.start()
 
