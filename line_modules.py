@@ -85,7 +85,7 @@ def count_180s(to):
         line_bot_api.push_message(
             to=to,
             messages=TextSendMessage(
-                text=message_texts.timer_complete_message
+                text=message_texts.timer_complete
             )
         )
 
@@ -98,7 +98,7 @@ def count_180s(to):
 
 def send_follow_message(event, user_name):
 
-    follow_massage = message_texts.followd_message
+    follow_massage = message_texts.followd_msg
 
     line_bot_api.reply_message(
         reply_token=event.reply_token,
@@ -106,7 +106,7 @@ def send_follow_message(event, user_name):
     )
 
     send_debug_message(
-        body=message_texts.create_debug_followed_message(
+        body=message_texts.create_debug_followed_msg(
             user_name=user_name
         )
     )
@@ -115,7 +115,7 @@ def send_follow_message(event, user_name):
 def send_unfollow_message():
 
     send_debug_message(
-        body=message_texts.debug_unfollow_message
+        body=message_texts.debug_unfollow_msg
     )
 
 
@@ -124,7 +124,7 @@ def send_join_message(event):
     # 参加したグループのIDを取得
     group_id = event.source.group_id
 
-    join_message = message_texts.join_message
+    join_message = message_texts.join_msg
 
     line_bot_api.reply_message(
         reply_token=event.reply_token,
@@ -142,7 +142,7 @@ def send_join_message(event):
     values.update(group_id=group_id)
 
     send_debug_message(
-        body=message_texts.debug_join_message
+        body=message_texts.debug_join_msg
     )
 
 
@@ -151,7 +151,7 @@ def send_leave_message_and_leave(event):
     # 退出するグループのIDを取得
     group_id = event.source.group_id
 
-    leave_message_previous = message_texts.leave_message
+    leave_message_previous = message_texts.leave_msg
 
     try:
         line_bot_api.push_message(
@@ -168,7 +168,7 @@ def send_leave_message_and_leave(event):
         line_bot_api.leave_group(group_id=group_id)
     finally:
         send_debug_message(
-            body=message_texts.debug_leave_message
+            body=message_texts.debug_leave_msg
         )
 
 
@@ -196,7 +196,7 @@ def send_reply_group_message(event, user_name):
                 text=message_texts.help_text_group
             )
         )
-        debug_msg += message_texts.create_debug_command_message(
+        debug_msg += message_texts.create_debug_command(
             command="---h"
         )
 
@@ -212,7 +212,7 @@ def send_reply_group_message(event, user_name):
         line_bot_api.push_message(
             to=event.source.group_id,
             messages=TextSendMessage(
-                text=message_texts.timer_set_message
+                text=message_texts.timer_set
             )
         )
         # 3分後にお知らせ
@@ -220,7 +220,7 @@ def send_reply_group_message(event, user_name):
 
     # 開発者宛メッセージ
     elif flg == "----":
-        debug_msg += message_texts.create_debug_command_message(
+        debug_msg += message_texts.create_debug_command(
             command="----"
         )
 
@@ -248,7 +248,7 @@ def send_reply_room_message(event, user_name):
 
 def send_reply_user_message(event, user_name):
 
-    received_msg = message_texts.info_received_message
+    received_msg = message_texts.message_received
 
     debug_msg = message_texts.create_debug_line_message(
         user_name=user_name,
@@ -264,7 +264,7 @@ def send_reply_user_message(event, user_name):
     # グループLINEに転送
     if flg == "l---":
 
-        debug_msg += message_texts.create_debug_command_message(
+        debug_msg += message_texts.create_debug_command(
             command="l---"
         )
 
@@ -272,7 +272,7 @@ def send_reply_user_message(event, user_name):
             line_bot_api.push_message(
                 to=values.now_group_id,
                 messages=TextSendMessage(
-                    text=message_texts.create_line_message(
+                    text=message_texts.create_line_msg(
                         user_name=user_name,
                         msg=msg
                     )
@@ -280,16 +280,16 @@ def send_reply_user_message(event, user_name):
             )
         except LineBotApiError as e:
             # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
-            received_msg += message_texts.send_group_unknown_message
-            debug_msg += message_texts.debug_send_group_unknown_message
+            received_msg += message_texts.group_unknown
+            debug_msg += message_texts.debug_send_group_unknown
             debug_msg += e
         else:
-            received_msg += message_texts.info_message_shered
+            received_msg += message_texts.message_shered
 
     # グループLINEとslackに転送
     elif flg == "ls--":
 
-        debug_msg += message_texts.create_debug_command_message(
+        debug_msg += message_texts.create_debug_command(
             command="ls--"
         )
 
@@ -297,7 +297,7 @@ def send_reply_user_message(event, user_name):
             line_bot_api.push_message(
                 to=values.now_group_id,
                 messages=TextSendMessage(
-                    text=message_texts.create_line_message(
+                    text=message_texts.create_line_msg(
                         user_name=user_name,
                         msg=msg
                     )
@@ -305,14 +305,14 @@ def send_reply_user_message(event, user_name):
             )
         except LineBotApiError as e:
             # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
-            received_msg += message_texts.send_group_unknown_message
-            debug_msg += message_texts.debug_send_group_unknown_message
+            received_msg += message_texts.group_unknown
+            debug_msg += message_texts.debug_send_group_unknown
             debug_msg += e
         else:
-            received_msg += message_texts.info_message_shered
+            received_msg += message_texts.message_shered
 
         slack_modlues.share_line_msg(
-            msg=message_texts.create_slack_message(
+            msg=message_texts.create_slack_msg(
                 user_name=user_name,
                 msg=msg
             )
@@ -321,7 +321,7 @@ def send_reply_user_message(event, user_name):
     # グループLINEとslacｋとgmailに転送
     elif flg == "lsg-":
 
-        debug_msg += message_texts.create_debug_command_message(
+        debug_msg += message_texts.create_debug_command(
             command="lsg-"
         )
 
@@ -329,7 +329,7 @@ def send_reply_user_message(event, user_name):
             line_bot_api.push_message(
                 to=values.now_group_id,
                 messages=TextSendMessage(
-                    text=message_texts.create_line_message(
+                    text=message_texts.create_line_msg(
                         user_name=user_name,
                         msg=msg
                     )
@@ -337,14 +337,14 @@ def send_reply_user_message(event, user_name):
             )
         except LineBotApiError as e:
             # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
-            received_msg += message_texts.send_group_unknown_message
-            debug_msg += message_texts.debug_send_group_unknown_message
+            received_msg += message_texts.group_unknown
+            debug_msg += message_texts.debug_send_group_unknown
             debug_msg += str(e)
         else:
-            received_msg += message_texts.info_message_shered
+            received_msg += message_texts.message_shered
 
         slack_modlues.share_line_msg(
-            msg=message_texts.create_slack_message(
+            msg=message_texts.create_slack_msg(
                 user_name=user_name,
                 msg=msg
             )
@@ -357,14 +357,14 @@ def send_reply_user_message(event, user_name):
     # help
     elif flg == "---h":
         received_msg = message_texts.help_text_user
-        debug_msg += message_texts.create_debug_command_message(
+        debug_msg += message_texts.create_debug_command(
             command="---h"
         )
 
     # leave ここでは使えない
     elif flg == "---l":
-        received_msg += message_texts.unknown_command_message
-        debug_msg += message_texts.create_debug_command_message(
+        received_msg += message_texts.unknown_command
+        debug_msg += message_texts.create_debug_command(
             command="---l"
         )
 
@@ -372,13 +372,13 @@ def send_reply_user_message(event, user_name):
     elif flg == "---t":
 
         # タイマーをセットしたことを伝える
-        received_msg = message_texts.timer_set_message
+        received_msg = message_texts.timer_set
         # 3分後にお知らせ
         count_180s(to=event.source.user_id)
 
     # 開発者宛メッセージ
     elif flg == "----":
-        debug_msg += message_texts.create_debug_command_message(
+        debug_msg += message_texts.create_debug_command(
             command="----"
         )
 

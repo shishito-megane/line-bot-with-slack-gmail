@@ -32,7 +32,7 @@ if to_address is None:
 def create_message(user_name, msg):
 
     email_msg = MIMEText(
-        message_texts.create_email_message(
+        message_texts.create_email_msg(
             user_name=user_name,
             msg=msg
         )
@@ -74,7 +74,7 @@ def send(user_name, msg):
         ).as_string())
     smtpobj.close()
 
-    return message_texts.email_send_message
+    return message_texts.email_send
 
 
 if __name__ == '__main__':

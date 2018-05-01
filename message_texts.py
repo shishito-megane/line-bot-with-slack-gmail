@@ -27,12 +27,12 @@ https://github.com/shishito-megane/line-bot-with-slack-gmail/
 """
 
 
-followd_message = """
+followd_msg = """
 友達追加ありがとうございます\uDBC0\uDC78
 どうぞよろしくお願いします\uDBC0\uDCB3
 """
 
-join_message = """
+join_msg = """
 はじめまして\uDBC0\uDC8A
 ボクは大学1年生の「ケンタ」って言います．
 センパイからの伝言を伝えます．
@@ -40,23 +40,23 @@ join_message = """
 使い方を知りたいときは次のように言ってみてね．
 """
 
-leave_message = """
+leave_msg = """
 ボクは去ります...\uD8C0\uDC7C
 いままで仲良くしてくれてありがとう！！
 これからも個人トークで仲良くしてね！
 """
 
-timer_set_message = "タイマーをセットしました．3分後にお知らせするよ！"
+timer_set = "タイマーをセットしました．3分後にお知らせするよ！"
 
-timer_complete_message = """3分経ちました．カップ麺食べたいなー！"""
+timer_complete = """3分経ちました．カップ麺食べたいなー！"""
 
-info_received_message = "メッセージを受け取りました．"
+message_received = "メッセージを受け取りました．"
 
-info_message_shered = "ほかのみんなにも伝えたよ！"
+message_shered = "ほかのみんなにも伝えたよ！"
 
-unknown_command_message = "その操作はここでは使えないよ!"
+unknown_command = "その操作はここでは使えないよ!"
 
-send_group_unknown_message = """
+group_unknown = """
 送信先のグループがわかりませんでした．
 送りたいグループで「#動け！」と言ってください．
 """
@@ -67,27 +67,28 @@ email_subject = "出欠連絡ボットからの新しいメッセージです"
 
 email_err = "メールが送れませんでした．ボクを作ってくれた人に連絡してください．"
 
-email_send_message = "メールを送ったよ！"
+email_send = "メールを送ったよ！"
 
-def create_line_message(user_name, msg):
+
+def create_line_msg(user_name, msg):
     return "「"+user_name+"」センパイから「"+msg+"」と連絡がありました．"
 
 
-def create_slack_message(user_name, msg):
+def create_slack_msg(user_name, msg):
     return "「"+user_name+"」センパイから「"+msg+"」と連絡がありました．"
 
 
-def create_email_message(user_name, msg):
+def create_email_msg(user_name, msg):
     return "出欠連絡ボットです．\n「"+user_name+"」さんから「"+msg+"」と連絡がありました．"
 
 
-debug_unfollow_message = "誰かがブロックしました．．."
+debug_unfollow_msg = "誰かがブロックしました．．."
 
-debug_join_message = "新しいグループに参加しました．"
+debug_join_msg = "新しいグループに参加しました．"
 
-debug_leave_message = "グループから退出しました．"
+debug_leave_msg = "グループから退出しました．"
 
-debug_send_group_unknown_message = "送信先エラー"
+debug_send_group_unknown = "送信先エラー"
 
 debug_send_leave_message_err = "サヨナラメッセージが送れませんでした"
 
@@ -95,10 +96,10 @@ debug_parse_message_err = "パースに失敗したようです"
 
 debug_email_err = "メールが送れませんでした．"
 
-debug_email_send_message = "メールを送りました．"
+debug_email_send = "メールを送りました．"
 
 
-def create_debug_followed_message(user_name):
+def create_debug_followed_msg(user_name):
     return "新規フォロー:「" + user_name + "」"
 
 
@@ -106,6 +107,6 @@ def create_debug_line_message(user_name, msg, talk_type):
     return "「"+user_name+"」から「"+msg+"」 talk_type:"+talk_type
 
 
-def create_debug_command_message(command,):
+def create_debug_command(command, ):
     return " command:"+command
 
