@@ -78,11 +78,11 @@ def get_user_name(event):
     return user_name
 
 
-def count_180s(event):
+def count_180s(to):
 
     def info_180s():
         line_bot_api.push_message(
-            to=event.source.user_id,
+            to=to,
             messages=TextSendMessage(
                 text=message_texts.timer_complete_message
             )
@@ -215,7 +215,7 @@ def send_reply_group_message(event, user_name):
             )
         )
         # 3分後にお知らせ
-        count_180s(event)
+        count_180s(to=event.source.group_id)
 
     # 開発者宛メッセージ
     elif flg == "----":
@@ -368,7 +368,7 @@ def send_reply_user_message(event, user_name):
         # タイマーをセットしたことを伝える
         received_msg = message_texts.timer_set_message
         # 3分後にお知らせ
-        count_180s(event)
+        count_180s(to=event.source.user_id)
 
     # 開発者宛メッセージ
     elif flg == "----":
