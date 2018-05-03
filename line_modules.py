@@ -70,7 +70,7 @@ def get_user_name(event):
     except LineBotApiError as e:
         user_name = message_texts.unknown_display_name
         slack_modlues.debug_line_msg(
-            msg=e
+            msg=str(e)
         )
 
     # # for debug
@@ -162,7 +162,7 @@ def send_leave_message_and_leave(event):
         )
     except LineBotApiError as e:
         send_debug_message(
-            body=message_texts.debug_send_leave_message_err + e
+            body=message_texts.debug_send_leave_message_err + str(e)
         )
     else:
         line_bot_api.leave_group(group_id=group_id)
@@ -282,7 +282,7 @@ def send_reply_user_message(event, user_name):
             # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
             received_msg += message_texts.group_unknown
             debug_msg += message_texts.debug_send_group_unknown
-            debug_msg += e
+            debug_msg += str(e)
         else:
             received_msg += message_texts.message_shered
 
@@ -307,7 +307,7 @@ def send_reply_user_message(event, user_name):
             # サーバーの再起動時にメッセージの送り先が更新されてなかった場合
             received_msg += message_texts.group_unknown
             debug_msg += message_texts.debug_send_group_unknown
-            debug_msg += e
+            debug_msg += str(e)
         else:
             received_msg += message_texts.message_shered
 
