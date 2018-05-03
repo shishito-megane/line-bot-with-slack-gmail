@@ -73,8 +73,8 @@ def get_user_name(event):
             msg=e
         )
 
-    # for debug
-    user_name = "***デバッグ中につき非表示***"
+    # # for debug
+    # user_name = "***デバッグ中につき非表示***"
 
     return user_name
 
